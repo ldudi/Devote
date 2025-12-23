@@ -37,8 +37,6 @@ struct ContentView: View {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
@@ -55,8 +53,6 @@ struct ContentView: View {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
@@ -65,55 +61,72 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                VStack(spacing: 16) {
-                    TextField("new Task", text: $task)
-                        .padding()
-                        .background(
-                            Color(UIColor.systemGray6)
-                        )
-                        .cornerRadius(10)
-                    
-                    Button {
-                        addItem()
-                    } label: {
-                        Spacer()
-                        Text("SAVE")
-                        Spacer()
-                    }
-                    .disabled(isButtonDisabled)
-                    .padding()
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .background(isButtonDisabled ? Color.gray : Color.pink)
-                    .cornerRadius(10)
-
-                } //: VSTACK
-                .padding()
-                
-                List {
-                    ForEach(items) { item in
-                        VStack(alignment: .leading) {
-                            Text(item.task ?? "")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                                .font(.footnote)
-                                .foregroundColor(.gray)
+            ZStack {
+                VStack {
+                    VStack(spacing: 16) {
+                        TextField("new Task", text: $task)
+                            .padding()
+                            .background(
+                                Color(UIColor.systemGray6)
+                            )
+                            .cornerRadius(10)
+                        
+                        Button {
+                            addItem()
+                        } label: {
+                            Spacer()
+                            Text("SAVE")
+                            Spacer()
                         }
-                    }
-                    .onDelete(perform: deleteItems)
-                } //: LIST
-                .navigationBarTitle("Daily Tasks", displayMode: .large)
-                .toolbar {
-                    #if os(iOS)
-                    ToolbarItem(placement: .topBarTrailing) {
-                        EditButton()
-                    }
-                    #endif
-                } //: TOOLBAR
-            } //: NAVIGATION
-        }
+                        .disabled(isButtonDisabled)
+                        .padding()
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .background(isButtonDisabled ? Color.gray : Color.pink)
+                        .cornerRadius(10)
+                        
+                    } //: VSTACK
+                    .padding()
+                    
+                    List {
+                        ForEach(items) { item in
+                            VStack(alignment: .leading) {
+                                Text(item.task ?? "")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                                    .font(.footnote)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .onDelete(perform: deleteItems)
+                    } //: LIST
+                    .scrollContentBackground(.hidden)
+                    .listStyle(InsetGroupedListStyle())
+                    .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.3), radius: 12)
+                    .padding(.vertical, 0)
+                    .frame(maxWidth: 640)
+                } //: VSTACK
+            } //: ZStack
+            .onAppear {
+                UITableView.appearance().backgroundColor = .clear
+            }
+            .navigationBarTitle("Daily Tasks", displayMode: .large)
+            .toolbar {
+                #if os(iOS)
+                ToolbarItem(placement: .topBarTrailing) {
+                    EditButton()
+                }
+                #endif
+            } //: TOOLBAR
+            .background(
+                BackgroundImageView()
+            )
+            .background(
+                backgroundGradient.ignoresSafeArea(.all)
+            )
+        } //: NAVIGATION
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
